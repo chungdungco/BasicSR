@@ -176,3 +176,23 @@ def imresize(img, scale, antialiasing=True):
             out_2 = out_2.transpose(1, 2, 0)
 
     return out_2
+
+
+def rgb2ycbcr(img, y_only=False):
+    """Convert RGB image to YCbCr image.
+    Args:
+        img (ndarray): RGB image with shape (H, W, C).
+        y_only (bool): Whether to only return Y channel.
+    Returns:
+        ndarray: YCbCr image with shape (H, W, C).
+    """
+    img = img.astype(np.float32) / 255.
+    if y_only:
+        return np.dot(img, [65.481, 128.553, 24.966]) + 16
+    else:
+        out = np.matmul(img, [[65.481, -37.797, 112],
+                              [128.553, -74.203, -93.786],
+                              [24.966, 112, -18.214]])
+        out[:, :, 0] += 16
+        out[:, :, 1:] += 128
+        return out
